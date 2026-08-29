@@ -1,0 +1,7 @@
+# Requires Python 3.12+ (pytest-homeassistant-custom-component tracks core HA's
+# minimum Python version, which is newer than this repo's own runtime needs).
+#
+#   python3.12 -m venv .venv-ha && source .venv-ha/bin/activate
+#   pip install -r tests/requirements.txt
+#   pytest tests/
+pytest-homeassistant-custom-component==0.13.205

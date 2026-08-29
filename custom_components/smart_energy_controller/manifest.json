@@ -1,0 +1,12 @@
+{
+  "domain": "smart_energy_controller",
+  "name": "Smart Energy Controller",
+  "version": "0.2.0",
+  "documentation": "https://github.com/si27645/smart-energy-controller",
+  "issue_tracker": "https://github.com/si27645/smart-energy-controller/issues",
+  "codeowners": ["@si27645"],
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "requirements": [],
+  "config_flow": true
+}

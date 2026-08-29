@@ -1,0 +1,504 @@
+<title>Smart Energy Controller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101c1f;
+    --ink-soft:#3d4d47;
+    --paper:#e9ece6;
+    --surface:#dde2d9;
+    --surface-2:#cfd6ca;
+    --line:#b7c0b3;
+    --copper:#a85e26;
+    --copper-soft:#c98a4f;
+    --teal:#1b4f52;
+    --teal-soft:#3d7376;
+    --sage:#4a6e4f;
+    --shadow: 0 1px 0 rgba(16,28,31,0.08);
+    --radius: 3px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e9ece2;
+      --ink-soft:#a9b6ac;
+      --paper:#0a1213;
+      --surface:#111e1d;
+      --surface-2:#172725;
+      --line:#263a37;
+      --copper:#e0924f;
+      --copper-soft:#c9793a;
+      --teal:#5fa9ac;
+      --teal-soft:#3d7376;
+      --sage:#7fae82;
+      --shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e9ece2;
+    --ink-soft:#a9b6ac;
+    --paper:#0a1213;
+    --surface:#111e1d;
+    --surface-2:#172725;
+    --line:#263a37;
+    --copper:#e0924f;
+    --copper-soft:#c9793a;
+    --teal:#5fa9ac;
+    --teal-soft:#3d7376;
+    --sage:#7fae82;
+    --shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  *{box-sizing:border-box;}
+  html{color-scheme:light dark;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size:17px;
+    line-height:1.55;
+  }
+  ::selection{background:var(--copper); color:var(--paper);}
+  a{color:inherit;}
+  h1,h2,h3{
+    font-family:"Big Shoulders Display", "Arial Narrow", sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    font-weight:700;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{
+    font-family:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:0.72rem;
+    color:var(--teal-soft);
+    font-weight:600;
+  }
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- header ---------- */
+  header.site{
+    position:sticky; top:0; z-index:20;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px; padding:16px 28px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:"Big Shoulders Display", sans-serif;
+    font-weight:700; font-size:1.15rem; text-transform:uppercase; letter-spacing:0.02em;
+  }
+  .brand svg{display:block;}
+  .nav-links{
+    display:flex; gap:28px; list-style:none; margin:0; padding:0;
+    font-family:"IBM Plex Mono", monospace; font-size:0.82rem; letter-spacing:0.02em;
+  }
+  .nav-links a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px;}
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--ink); border-color:var(--copper);}
+  .nav-cta{
+    font-family:"IBM Plex Mono", monospace; font-size:0.8rem; font-weight:600;
+    background:var(--ink); color:var(--paper); padding:9px 16px; border-radius:var(--radius);
+    text-decoration:none; white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--copper);}
+  @media (max-width:780px){ .nav-links{display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:64px 0 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:end;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 5vw, 4.1rem);
+    line-height:0.98;
+    margin:14px 0 22px;
+  }
+  .hero h1 em{
+    font-style:normal; color:var(--copper);
+  }
+  .hero p.lead{
+    max-width:52ch; font-size:1.15rem; color:var(--ink-soft); margin:0 0 26px;
+  }
+  .hero-actions{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+  .btn{
+    font-family:"IBM Plex Mono", monospace; font-size:0.85rem; font-weight:600;
+    padding:12px 20px; border-radius:var(--radius); text-decoration:none;
+    display:inline-block; border:1px solid var(--ink);
+  }
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover{background:var(--copper); border-color:var(--copper);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .hero-note{
+    margin-top:14px; font-family:"IBM Plex Mono",monospace; font-size:0.75rem; color:var(--ink-soft);
+  }
+
+  /* ---------- arc chart ---------- */
+  .arc-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 18px 10px;
+  }
+  .arc-card .cap{
+    display:flex; justify-content:space-between; font-family:"IBM Plex Mono",monospace;
+    font-size:0.68rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.08em;
+    margin-bottom:6px;
+  }
+  .arc-legend{display:flex; gap:16px; margin-top:8px; font-family:"IBM Plex Mono",monospace; font-size:0.7rem; color:var(--ink-soft);}
+  .arc-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  section{padding:64px 0;}
+  section.tight{padding:48px 0;}
+  .section-head{margin-bottom:34px; max-width:60ch;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem); margin:8px 0 12px;}
+  .section-head p{color:var(--ink-soft); margin:0; font-size:1.02rem;}
+
+  /* ---------- problem ---------- */
+  .problem-list{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .problem-item{background:var(--paper); padding:26px 24px;}
+  .problem-item .tag{font-family:"IBM Plex Mono",monospace; font-size:0.7rem; color:var(--copper); letter-spacing:0.06em;}
+  .problem-item p{margin:10px 0 0; color:var(--ink-soft); font-size:0.98rem;}
+  @media (max-width:780px){ .problem-list{grid-template-columns:1fr;} }
+
+  /* ---------- rules ---------- */
+  .rules-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:14px;
+  }
+  .rule-card{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+    padding:18px 20px; display:flex; flex-direction:column; gap:10px;
+  }
+  .rule-card .cond{
+    font-family:"IBM Plex Mono",monospace; font-size:0.86rem; line-height:1.6;
+  }
+  .rule-card .cond .k{color:var(--teal-soft); font-weight:600;}
+  .rule-card .cond .v{color:var(--copper);}
+  .rule-card .out{
+    font-family:"IBM Plex Mono",monospace; font-size:0.86rem; color:var(--ink);
+    border-top:1px dashed var(--line); padding-top:10px;
+  }
+  .rule-card .out .arrow{color:var(--sage); margin-right:6px;}
+  @media (max-width:780px){ .rules-grid{grid-template-columns:1fr;} }
+
+  /* ---------- integrations ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:10px;}
+  .chip{
+    font-family:"IBM Plex Mono",monospace; font-size:0.82rem;
+    border:1px solid var(--line); border-radius:20px; padding:8px 16px;
+    background:var(--surface); color:var(--ink-soft);
+  }
+  .chip b{color:var(--ink); font-weight:600;}
+
+  /* ---------- pricing ---------- */
+  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .price-card{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+    padding:26px 22px; display:flex; flex-direction:column; gap:14px;
+  }
+  .price-card.featured{
+    border-color:var(--copper); background:var(--surface-2);
+    box-shadow:0 0 0 1px var(--copper) inset;
+  }
+  .price-card .plan{font-family:"IBM Plex Mono",monospace; letter-spacing:0.06em; text-transform:uppercase; font-size:0.78rem; color:var(--teal-soft);}
+  .price-card .amount{font-family:"Big Shoulders Display",sans-serif; font-size:2.4rem; font-weight:700;}
+  .price-card .amount small{font-family:"IBM Plex Mono",monospace; font-size:0.9rem; font-weight:500; color:var(--ink-soft);}
+  .price-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; font-size:0.92rem; color:var(--ink-soft); flex-grow:1;}
+  .price-card ul li::before{content:"— "; color:var(--copper);}
+  @media (max-width:900px){ .pricing-grid{grid-template-columns:1fr;} }
+
+  /* ---------- waitlist ---------- */
+  .waitlist{
+    background:var(--ink); color:var(--paper); border-radius:var(--radius);
+    padding:44px 40px; display:grid; grid-template-columns:1.2fr 1fr; gap:32px; align-items:center;
+  }
+  .waitlist h2{color:var(--paper); font-size:clamp(1.5rem,3vw,2rem);}
+  .waitlist p{color:color-mix(in srgb, var(--paper) 70%, transparent); margin:10px 0 0; max-width:44ch;}
+  .waitlist form{display:flex; gap:10px;}
+  .waitlist input[type="email"]{
+    flex:1; min-width:0; padding:13px 14px; border-radius:var(--radius); border:1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+    background:color-mix(in srgb, var(--paper) 10%, transparent); color:var(--paper); font-family:"IBM Plex Mono",monospace; font-size:0.9rem;
+  }
+  .waitlist input[type="email"]::placeholder{color:color-mix(in srgb, var(--paper) 50%, transparent);}
+  .waitlist button{
+    font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:0.85rem;
+    background:var(--copper); color:var(--ink); border:none; padding:0 20px; border-radius:var(--radius); cursor:pointer;
+  }
+  .waitlist button:hover{background:var(--copper-soft);}
+  .waitlist .status{margin-top:10px; font-family:"IBM Plex Mono",monospace; font-size:0.78rem; color:var(--sage); min-height:1em;}
+  @media (max-width:780px){ .waitlist{grid-template-columns:1fr;} .waitlist form{flex-direction:column;} }
+
+  footer{
+    border-top:1px solid var(--line); padding:28px 0 40px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-family:"IBM Plex Mono",monospace; font-size:0.75rem; color:var(--ink-soft);
+  }
+  footer a{text-decoration:none; border-bottom:1px solid var(--line);}
+  footer a:hover{color:var(--ink); border-color:var(--ink);}
+
+  :focus-visible{outline:2px solid var(--copper); outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto !important;} }
+</style>
+
+<header class="site">
+  <div class="nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="13" cy="13" r="5.5" fill="var(--copper)"/>
+        <path d="M13 1v4M13 21v4M25 13h-4M5 13H1M21.5 4.5l-2.8 2.8M7.3 18.7l-2.8 2.8M21.5 21.5l-2.8-2.8M7.3 7.3 4.5 4.5" stroke="var(--teal-soft)" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      Smart Energy<span class="mono" style="color:var(--copper)">.</span>Controller
+    </div>
+    <ul class="nav-links">
+      <li><a href="#como-funciona">Como funciona</a></li>
+      <li><a href="#integracoes">Integrações</a></li>
+      <li><a href="#precos">Preços</a></li>
+    </ul>
+    <a class="nav-cta" href="#waitlist">Lista de espera</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Motor de decisão energética · para casas com solar</p>
+          <h1>A tua casa já tem<br>os dados. Falta-lhe<br><em>o cérebro.</em></h1>
+          <p class="lead">Liga-se ao inversor, à wallbox e à bomba de calor que já tens — e decide sozinho a cada minuto o que fazer com cada kWh, em vez de o veres escoar para a rede a troco de nada.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#waitlist">Entrar na lista de espera</a>
+            <a class="btn btn-ghost" href="#como-funciona">Ver como decide →</a>
+          </div>
+          <p class="hero-note">Corre dentro do teu Home Assistant. Local-first — os teus dados de consumo não saem de casa. <strong style="color:var(--ink)">Com bateria ou sem bateria</strong> — sem bateria, usamos o termoacumulador e a bomba de calor como reserva térmica.</p>
+        </div>
+        <div class="arc-card">
+          <div class="cap"><span>Ciclo de 24h — hoje</span><span>03:00 → 21:00</span></div>
+          <svg viewBox="0 0 480 260" width="100%" role="img" aria-label="Gráfico de produção solar e preço da eletricidade ao longo do dia, com três decisões automáticas assinaladas">
+            <defs>
+              <linearGradient id="solarFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--copper)" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="var(--copper)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- gridlines -->
+            <g stroke="var(--line)" stroke-width="1">
+              <line x1="0" y1="60" x2="480" y2="60"/>
+              <line x1="0" y1="120" x2="480" y2="120"/>
+              <line x1="0" y1="180" x2="480" y2="180"/>
+            </g>
+            <!-- price curve (teal) -->
+            <path d="M0,150 C 40,90 80,70 120,110 C 170,165 200,190 240,185 C 280,180 310,140 350,90 C 390,55 430,70 480,60"
+                  fill="none" stroke="var(--teal-soft)" stroke-width="2.5"/>
+            <!-- solar curve (copper) filled -->
+            <path d="M0,230 C 60,225 100,195 150,120 C 190,65 230,40 240,38 C 250,40 290,65 330,120 C 380,195 420,225 480,230 L480,260 L0,260 Z"
+                  fill="url(#solarFill)"/>
+            <path d="M0,230 C 60,225 100,195 150,120 C 190,65 230,40 240,38 C 250,40 290,65 330,120 C 380,195 420,225 480,230"
+                  fill="none" stroke="var(--copper)" stroke-width="2.5"/>
+            <!-- decision markers -->
+            <circle cx="30" cy="180" r="5" fill="var(--sage)" stroke="var(--paper)" stroke-width="2"/>
+            <circle cx="260" cy="182" r="5" fill="var(--sage)" stroke="var(--paper)" stroke-width="2"/>
+            <circle cx="335" cy="122" r="5" fill="var(--sage)" stroke="var(--paper)" stroke-width="2"/>
+          </svg>
+          <div class="arc-legend">
+            <span><i class="swatch" style="background:var(--copper)"></i>Produção solar</span>
+            <span><i class="swatch" style="background:var(--teal-soft)"></i>Preço da eletricidade</span>
+            <span><i class="swatch" style="background:var(--sage)"></i>Decisão automática</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">O problema</p>
+        <h2>Cada dispositivo é inteligente. A casa não é.</h2>
+      </div>
+      <div class="problem-list">
+        <div class="problem-item">
+          <p class="tag">// excedente perdido</p>
+          <p>O sol dá 3 kW a mais ao meio-dia e ninguém está em casa para ligar o carro — vai tudo para a rede a troco de cêntimos.</p>
+        </div>
+        <div class="problem-item">
+          <p class="tag">// bateria mal gerida</p>
+          <p>O termoacumulador liga a meio da tarde com a bateria a 40%, gastando o que devia sobrar para a noite.</p>
+        </div>
+        <div class="problem-item">
+          <p class="tag">// automações frágeis</p>
+          <p>Home Assistant tem os dados todos, mas manter as automações certas exige YAML, tempo e tentativa-erro constante.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Como funciona</p>
+        <h2>Regras que se explicam sozinhas</h2>
+        <p>O motor recalcula a cada poucos minutos, cruzando produção solar prevista, preço dinâmico da eletricidade e o estado real de cada dispositivo. Tens bateria? Otimiza a carga e descarga. Não tens? Usa o termoacumulador e a bomba de calor como reserva térmica — o motor adapta-se ao que existe em tua casa.</p>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">excedente_solar</span> &gt; <span class="v">3.2 kW</span></p>
+          <p class="out"><span class="arrow">→</span>carregar o carro elétrico</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">bateria.soc</span> &gt; <span class="v">80%</span></p>
+          <p class="out"><span class="arrow">→</span>ligar o termoacumulador</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">previsão_amanhã</span> = <span class="v">baixa</span></p>
+          <p class="out"><span class="arrow">→</span>não gastar a bateria hoje</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">preço@03:00</span> = <span class="v">baixo</span></p>
+          <p class="out"><span class="arrow">→</span>carregar a bateria da rede</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">ev.precisa</span> = <span class="v">20 kWh antes 08:00</span></p>
+          <p class="out"><span class="arrow">→</span>otimizar a janela de carregamento</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">decisão</span> = <span class="v">qualquer</span></p>
+          <p class="out"><span class="arrow">→</span>mostrar sempre o porquê</p>
+        </div>
+        <div class="rule-card">
+          <p class="cond">SE <span class="k">excedente_solar</span> &gt; <span class="v">1.5 kW</span> <span style="color:var(--ink-soft); font-size:0.75rem;">(sem bateria)</span></p>
+          <p class="out"><span class="arrow">→</span>aquecer o termoacumulador ao máximo — bateria térmica</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="integracoes" class="tight">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Integrações</p>
+        <h2>Fala com o que já tens em casa</h2>
+        <p>Nenhuma integração é obrigatória — o motor usa o que existir. Bateria é opcional.</p>
+      </div>
+      <div class="chips">
+        <span class="chip"><b>FoxESS</b> · inversor</span>
+        <span class="chip"><b>Victron</b> · inversor/bateria</span>
+        <span class="chip"><b>Shelly</b> · relés e medição</span>
+        <span class="chip"><b>Wallbox</b> · carregamento EV</span>
+        <span class="chip"><b>Bomba de calor</b> · via Home Assistant</span>
+        <span class="chip"><b>Home Assistant</b> · hub central</span>
+        <span class="chip"><b>OMIE / Indexa</b> · tarifário dinâmico</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="precos">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Preços</p>
+        <h2>Simples, sem letras pequenas</h2>
+        <p>O motor de regras é gratuito para sempre — corre em tua casa, é teu. Só cobramos pelo que exige um servidor a correr do nosso lado.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <p class="plan">Community</p>
+          <p class="amount">€0<small>/sempre</small></p>
+          <ul>
+            <li>Motor de regras completo, sem limite de regras</li>
+            <li>FoxESS, Victron, Shelly, Wallbox, bomba de calor</li>
+            <li>Open-source, instalação via HACS</li>
+            <li>Explicação de cada decisão</li>
+          </ul>
+          <a class="btn btn-ghost" href="#waitlist">Começar grátis</a>
+        </div>
+        <div class="price-card featured">
+          <p class="plan">Cloud Copilot</p>
+          <p class="amount">€5<small>/mês</small></p>
+          <ul>
+            <li>Tudo do Community, mais:</li>
+            <li>Previsão solar + preço dinâmico agregada</li>
+            <li>Otimizador do dia seguinte (não só limiares)</li>
+            <li>Comparação com casas parecidas</li>
+          </ul>
+          <a class="btn btn-primary" href="#waitlist">Reservar acesso antecipado</a>
+        </div>
+        <div class="price-card">
+          <p class="plan">Instaladores</p>
+          <p class="amount">Sob consulta</p>
+          <ul>
+            <li>Painel hospedado multi-casa</li>
+            <li>O cliente final não mexe em YAML</li>
+            <li>Faturado por casa, com margem para ti</li>
+            <li>Ideal para diferenciar a tua instalação</li>
+          </ul>
+          <a class="btn btn-ghost" href="#waitlist">Falar sobre parceria</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight" id="waitlist">
+    <div class="wrap">
+      <div class="waitlist">
+        <div>
+          <p class="eyebrow" style="color:var(--copper-soft)">Lançamento em preparação</p>
+          <h2>Sê dos primeiros a testar</h2>
+          <p>Sem spam. Um email quando a versão Community sair no HACS, com desconto de lançamento para os planos pagos.</p>
+        </div>
+        <div>
+          <form id="waitlistForm">
+            <input type="email" id="waitlistEmail" placeholder="o-teu-email@exemplo.pt" required aria-label="O teu email">
+            <button type="submit">Entrar</button>
+          </form>
+          <p class="status" id="waitlistStatus" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; width:100%;">
+    <span>Smart Energy Controller — projeto em fase de validação</span>
+    <span>Construído sobre Home Assistant · local-first por design</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var form = document.getElementById('waitlistForm');
+    var status = document.getElementById('waitlistStatus');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('waitlistEmail').value.trim();
+      if(!email) return;
+      try{
+        var list = JSON.parse(localStorage.getItem('sec_waitlist') || '[]');
+        list.push({email: email, at: Date.now()});
+        localStorage.setItem('sec_waitlist', JSON.stringify(list));
+      }catch(err){ /* storage unavailable — still confirm visually */ }
+      status.textContent = 'Registado — falamos em breve.';
+      form.reset();
+    });
+  })();
+</script>

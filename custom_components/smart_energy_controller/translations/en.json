@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Smart Energy Controller",
+        "description": "Create the integration, then add rules under Settings → Devices & Services → Smart Energy Controller → Configure.",
+        "data": {
+          "scan_interval": "Evaluation interval (seconds)"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Only one instance of Smart Energy Controller is allowed."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "menu_options": {
+          "add_rule": "Add rule",
+          "remove_rule": "Remove rule"
+        }
+      },
+      "add_rule": {
+        "title": "New rule",
+        "description": "IF the condition is true THEN call the chosen service.",
+        "data": {
+          "name": "Rule name",
+          "entity_id": "Entity to watch",
+          "above": "Above (optional)",
+          "below": "Below (optional)",
+          "state": "State equals (optional)",
+          "service": "Service to call",
+          "explain": "Explanation (optional)",
+          "target_entity_id": "Target entity for the service (optional)"
+        }
+      },
+      "remove_rule": {
+        "title": "Remove rules",
+        "data": {
+          "rule": "Rules to remove"
+        }
+      }
+    },
+    "abort": {
+      "no_rules": "There are no rules configured."
+    },
+    "error": {
+      "condition_required": "Set at least one condition (above, below, or state)."
+    }
+  }
+}

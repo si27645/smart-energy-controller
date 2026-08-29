@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Smart Energy Controller",
+        "description": "Cria a integração e depois adiciona regras em Definições → Dispositivos e Serviços → Smart Energy Controller → Configurar.",
+        "data": {
+          "scan_interval": "Intervalo de avaliação (segundos)"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Só pode existir uma instância do Smart Energy Controller."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "menu_options": {
+          "add_rule": "Adicionar regra",
+          "remove_rule": "Remover regra"
+        }
+      },
+      "add_rule": {
+        "title": "Nova regra",
+        "description": "SE a condição for verdadeira ENTÃO chama o serviço escolhido.",
+        "data": {
+          "name": "Nome da regra",
+          "entity_id": "Entidade a observar",
+          "above": "Acima de (opcional)",
+          "below": "Abaixo de (opcional)",
+          "state": "Estado igual a (opcional)",
+          "service": "Serviço a chamar",
+          "explain": "Explicação (opcional)",
+          "target_entity_id": "Entidade alvo do serviço (opcional)"
+        }
+      },
+      "remove_rule": {
+        "title": "Remover regras",
+        "data": {
+          "rule": "Regras a remover"
+        }
+      }
+    },
+    "abort": {
+      "no_rules": "Não há regras configuradas."
+    },
+    "error": {
+      "condition_required": "Define pelo menos uma condição (acima de, abaixo de, ou estado)."
+    }
+  }
+}
