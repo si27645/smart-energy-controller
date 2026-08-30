@@ -1,83 +1,83 @@
 # ⚡ Smart Energy Controller
 
-> O "cérebro" que falta às casas com solar: decide sozinho quando carregar o carro, ligar o termoacumulador ou poupar a bateria — com base na produção solar, no preço da eletricidade e no que já tens em casa.
+> The "brain" solar homes are missing: decides on its own when to charge the car, turn on the water heater, or save the battery — based on solar production, electricity price, and what's already in your home.
 
-Motor de decisão energética para [Home Assistant](https://www.home-assistant.io/), com ou sem bateria. Liga-se ao inversor, à wallbox e à bomba de calor que já tens, e decide automaticamente coisas como:
+A decision engine for [Home Assistant](https://www.home-assistant.io/), with or without a battery. Connects to the inverter, wallbox, and heat pump you already have, and automatically decides things like:
 
-- "Tenho 3,2 kW de excedente solar → carregar o EV."
-- "Bateria > 80% → ligar o termoacumulador."
-- "Preço da eletricidade às 03:00 é baixo → carregar a bateria (ou o EV) da rede."
-- "Sem bateria e há excedente agora → aquecer o termoacumulador ao máximo em vez de o injetar de graça na rede."
+- "I have 3.2 kW of solar surplus → charge the EV."
+- "Battery > 80% → turn on the water heater."
+- "Electricity price at 03:00 is low → charge the battery (or the EV) from the grid."
+- "No battery and there's surplus right now → heat the water tank to the max instead of exporting it to the grid for nothing."
 
-Cada decisão vem com uma explicação — nunca é uma caixa preta.
+Every decision comes with an explanation — never a black box.
 
-## Porque existe isto
+## Why this exists
 
-Home Assistant já te dá os dados todos (produção solar, SoC da bateria, tarifário). O que falta é alguém a juntar esses dados e a agir sobre eles em tempo real, sem teres de escrever e manter dezenas de automações YAML. É isso que este projeto faz.
+Home Assistant already gives you all the data (solar production, battery SoC, tariff). What's missing is something that pulls that data together and acts on it in real time, without you having to write and maintain dozens of YAML automations. That's what this project does.
 
-## Estrutura do repositório
+## Repository layout
 
-| Pasta | O que é |
+| Folder | What it is |
 |---|---|
-| [`custom_components/smart_energy_controller/`](custom_components/smart_energy_controller/README.md) | A integração de Home Assistant — motor de regras local, grátis e open-source. Configura-se pela interface (`config_flow`), sem YAML. |
-| [`cloud-service/`](cloud-service/README.md) | Serviço opcional (Cloud Copilot): agrega previsão solar (Forecast.Solar) + preços dinâmicos (OMIE) e calcula um plano otimizado do dia seguinte. |
-| [`website/`](website/index.html) | Landing page do produto. |
+| [`custom_components/smart_energy_controller/`](custom_components/smart_energy_controller/README.md) | The Home Assistant integration — the local rules engine, free and open-source. Set up via the UI (`config_flow`), no YAML required. |
+| [`cloud-service/`](cloud-service/README.md) | Optional service (Cloud Copilot): aggregates solar forecasts (Forecast.Solar) + dynamic prices (OMIE) and computes an optimized day-ahead plan. |
+| [`website/`](website/index.html) | Product landing page. |
 
-## Instalação rápida
+## Quick install
 
-1. Copia `custom_components/smart_energy_controller/` para `<config>/custom_components/` na tua instalação de Home Assistant.
-2. Reinicia o Home Assistant.
-3. Definições → Dispositivos e Serviços → Adicionar integração → **Smart Energy Controller**.
-4. Configurar → Adicionar regra.
+1. Copy `custom_components/smart_energy_controller/` into `<config>/custom_components/` on your Home Assistant instance.
+2. Restart Home Assistant.
+3. Settings → Devices & Services → Add Integration → **Smart Energy Controller**.
+4. Configure → Add rule.
 
-Detalhes, exemplos de configuração (com e sem bateria) e a lista de serviços disponíveis: [custom_components/smart_energy_controller/README.md](custom_components/smart_energy_controller/README.md).
+Details, configuration examples (with and without a battery), and the list of available services: [custom_components/smart_energy_controller/README.md](custom_components/smart_energy_controller/README.md).
 
-## Com bateria ou sem bateria — o motor adapta-se
+## With a battery or without — the engine adapts
 
-Nem toda a casa com solar tem bateria. O motor não assume que existe:
+Not every solar home has a battery. The engine doesn't assume one exists:
 
-- **Com bateria**: otimiza carga/descarga (quando encher da rede, quando poupar para a noite).
-- **Sem bateria**: usa o termoacumulador e a bomba de calor como "bateria térmica" — aquece água/casa sempre que há excedente, em vez de o injetar de graça na rede — e continua a otimizar o carregamento do EV pelo preço.
+- **With a battery**: optimizes charge/discharge (when to top up from the grid, when to save for the night).
+- **Without a battery**: uses the water heater and heat pump as a "thermal battery" — heats water/the house whenever there's surplus, instead of exporting it to the grid for nothing — and still optimizes EV charging by price.
 
-## Integrações
+## Integrations
 
-FoxESS · Victron · Shelly · Wallbox (ou OpenEVSE / go-eCharger) · bombas de calor via Home Assistant · OMIE / Indexa (tarifário dinâmico). Nenhuma é obrigatória — o motor usa o que existir.
+FoxESS · Victron · Shelly · Wallbox (or OpenEVSE / go-eCharger) · heat pumps via Home Assistant · OMIE / Indexa (dynamic tariffs). None are required — the engine uses whatever exists.
 
-## Diferenciação
+## Differentiation
 
-- **[EVCC](https://evcc.io/)** — ótimo para carregamento EV, mas foco estreito no EV, sem motor central multi-dispositivo.
-- **Soluções proprietárias** (Solar Manager e semelhantes) — fechadas a um ecossistema, não integram com o Home Assistant.
-- **HA Energy Dashboard nativo** — mostra dados, não decide nada sozinho.
+- **[EVCC](https://evcc.io/)** — great for EV charging, but narrowly focused on EVs, with no central multi-device engine.
+- **Proprietary solutions** (Solar Manager and similar) — closed to a single ecosystem, don't integrate with Home Assistant.
+- **Native HA Energy Dashboard** — shows data, doesn't decide anything on its own.
 
-## Grátis e open-source, com um add-on cloud opcional
+## Free and open-source, with an optional cloud add-on
 
-O motor de regras (`custom_components/`) é **grátis para sempre** e corre inteiramente local — os teus dados de consumo não saem de casa. O [Cloud Optimizer](cloud-service/README.md) é um serviço opcional à parte, para quem quer previsão agregada e um otimizador real do dia seguinte em vez de só limiares. Não é preciso para o motor local funcionar.
+The rules engine (`custom_components/`) is **free forever** and runs entirely locally — your consumption data never leaves your home. The [Cloud Optimizer](cloud-service/README.md) is a separate, optional service, for anyone who wants aggregated forecasts and a real day-ahead optimizer instead of just thresholds. It isn't required for the local engine to work.
 
-## Testes
+## Tests
 
 ```bash
-# Motor de regras / cloud-service — Python 3.9+
+# Rules engine / cloud-service — Python 3.9+
 cd cloud-service && python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pytest -q
 
-# Integração Home Assistant — requer Python 3.12+ (pytest-homeassistant-custom-component)
+# Home Assistant integration — requires Python 3.12+ (pytest-homeassistant-custom-component)
 python3.12 -m venv .venv-ha && source .venv-ha/bin/activate
 pip install -r tests/requirements.txt && python -m pytest tests/ -q
 ```
 
-## Estado da publicação no HACS
+## HACS publishing status
 
-- [x] Estrutura, `manifest.json`, `hacs.json`, `LICENSE` e CI de validação (`hacs/action` + `hassfest`).
-- [x] `config_flow` — sem YAML obrigatório.
-- [ ] **Ícone/logo em [home-assistant/brands](https://github.com/home-assistant/brands)** — processo externo com revisão manual da equipa do Home Assistant; até lá, o `hacs/action` ignora deliberadamente esta verificação (`ignore: brands` no workflow).
-- [ ] Submissão a [hacs/default](https://github.com/hacs/default) para aparecer na pesquisa do HACS sem o utilizador colar o URL do repositório.
+- [x] Structure, `manifest.json`, `hacs.json`, `LICENSE`, and validation CI (`hacs/action` + `hassfest`).
+- [x] `config_flow` — no YAML required.
+- [ ] **Icon/logo in [home-assistant/brands](https://github.com/home-assistant/brands)** — external process with manual review by the Home Assistant team; until then, `hacs/action` deliberately ignores this check (`ignore: brands` in the workflow).
+- [ ] Submission to [hacs/default](https://github.com/hacs/default) to show up in HACS search without pasting the repository URL.
 
-Até estes dois últimos ficarem tratados, instala-se como [repositório personalizado](https://hacs.xyz/docs/faq/custom_repositories/) no HACS.
+Until those last two are sorted, install it as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) in HACS.
 
-## Contribuir
+## Contributing
 
-Issues e PRs são bem-vindos. O CI (`.github/workflows/validate.yml`) corre `hacs/action`, `hassfest` e os testes de integração em cada push.
+Issues and PRs are welcome. CI (`.github/workflows/validate.yml`) runs `hacs/action`, `hassfest`, and the integration tests on every push.
 
-## Licença
+## License
 
 [MIT](LICENSE)

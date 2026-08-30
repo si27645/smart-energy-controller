@@ -44,7 +44,7 @@ def parse_omie_marginalpdbc(text: str, *, market: str = "pt") -> list[float]:
 
     missing = [h + 1 for h, p in enumerate(prices) if p is None]
     if missing:
-        raise ValueError(f"Ficheiro OMIE incompleto — faltam as horas: {missing}")
+        raise ValueError(f"Incomplete OMIE file — missing hours: {missing}")
     return prices  # type: ignore[return-value]
 
 

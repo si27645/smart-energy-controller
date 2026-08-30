@@ -1,108 +1,108 @@
-# Smart Energy Controller — integração para Home Assistant
+# Smart Energy Controller — Home Assistant integration
 
-Versão inicial (Community/free): motor de regras determinísticas e explicáveis.
-Cada regra observa **um sensor** e, quando a condição passa a verdadeira, chama
-**um serviço** do Home Assistant sobre uma entidade alvo — e regista sempre o porquê.
+Initial (Community/free) version: a deterministic, explainable rules engine.
+Each rule watches **one sensor**, and when the condition becomes true, it calls
+**one service** on a target entity — and always logs why.
 
-## Instalação (MVP — manual, antes do HACS)
+## Installation (MVP — manual, ahead of HACS)
 
-1. Copia a pasta `custom_components/smart_energy_controller` para `<config>/custom_components/`.
-2. Reinicia o Home Assistant.
-3. Definições → Dispositivos e Serviços → Adicionar integração → "Smart Energy Controller".
+1. Copy the `custom_components/smart_energy_controller` folder into `<config>/custom_components/`.
+2. Restart Home Assistant.
+3. Settings → Devices & Services → Add Integration → "Smart Energy Controller".
 
-Não precisas de YAML — a integração cria-se pela interface. Uma instalação anterior baseada em `configuration.yaml` continua a funcionar: é importada automaticamente para uma entrada de configuração no primeiro arranque.
+No YAML needed — the integration is set up through the UI. A previous `configuration.yaml`-based setup still works: it's automatically imported into a config entry on first startup.
 
-## Adicionar regras (pela interface)
+## Adding rules (via the UI)
 
-Depois de criada a integração: **Definições → Dispositivos e Serviços → Smart Energy Controller → Configurar → Adicionar regra**.
+Once the integration is set up: **Settings → Devices & Services → Smart Energy Controller → Configure → Add rule**.
 
-Cada regra pede:
+Each rule asks for:
 
-| Campo | O que é |
+| Field | What it is |
 |---|---|
-| Nome da regra | Para identificares a regra nos logs/eventos. |
-| Entidade a observar | O sensor cuja condição vai ser testada (ex.: `sensor.excedente_solar_kw`). |
-| Acima de / Abaixo de / Estado igual a | A condição — define pelo menos uma. |
-| Serviço a chamar | `domain.service`, ex.: `switch.turn_on`. |
-| Entidade alvo do serviço | A entidade sobre a qual o serviço atua (ex.: `switch.wallbox_carregamento`) — distinta da entidade observada. Opcional só para serviços sem alvo, como `notify.*`. |
-| Explicação | Texto livre, opcional — aparece no evento de decisão. |
+| Rule name | So you can identify the rule in logs/events. |
+| Entity to watch | The sensor whose condition will be tested (e.g. `sensor.solar_surplus_kw`). |
+| Above / Below / State equals | The condition — set at least one. |
+| Service to call | `domain.service`, e.g. `switch.turn_on`. |
+| Target entity for the service | The entity the service acts on (e.g. `switch.wallbox_charging`) — distinct from the watched entity. Only optional for services with no target, like `notify.*`. |
+| Explanation | Free text, optional — shown in the decision event. |
 
-## Exemplo de configuração via YAML (legado, ainda suportado)
+## Configuration example via YAML (legacy, still supported)
 
 ```yaml
 smart_energy_controller:
-  scan_interval: 60  # segundos entre avaliações
+  scan_interval: 60  # seconds between evaluations
   rules:
-    - name: "Excedente solar → carregar EV"
-      entity_id: sensor.excedente_solar_kw
+    - name: "Solar surplus → charge EV"
+      entity_id: sensor.solar_surplus_kw
       above: 3.2
       service: switch.turn_on
       service_data:
-        entity_id: switch.wallbox_carregamento
-      explain: "Excedente solar acima de 3.2 kW"
+        entity_id: switch.wallbox_charging
+      explain: "Solar surplus above 3.2 kW"
 
-    - name: "Bateria > 80% → ligar termoacumulador"
-      entity_id: sensor.bateria_soc
+    - name: "Battery > 80% → turn on water heater"
+      entity_id: sensor.battery_soc
       above: 80
       service: switch.turn_on
       service_data:
-        entity_id: switch.termoacumulador
-      explain: "Bateria com mais de 80% de carga"
+        entity_id: switch.water_heater
+      explain: "Battery above 80% charge"
 
-    - name: "Preço baixo às 03:00 → carregar bateria da rede"
-      entity_id: sensor.preco_eletricidade_atual
+    - name: "Low price at 03:00 → charge battery from the grid"
+      entity_id: sensor.current_electricity_price
       below: 0.08
       service: switch.turn_on
       service_data:
-        entity_id: switch.carregar_bateria_rede
-      explain: "Preço da eletricidade abaixo de 0.08 €/kWh"
+        entity_id: switch.charge_battery_from_grid
+      explain: "Electricity price below €0.08/kWh"
 ```
 
-## Exemplo para quem não tem bateria
+## Example for homes without a battery
 
-Sem bateria não há onde "guardar" o excedente — por isso as regras usam o termoacumulador/bomba de calor como reserva térmica, notificam para cargas manuais (máquina de lavar/loiça) e continuam a otimizar o EV pelo preço, já que aí a rede é a única reserva disponível. Cria cada uma pela interface (ver tabela acima) ou por YAML:
+Without a battery there's nowhere to "store" the surplus — so these rules use the water heater/heat pump as thermal storage, notify you for manual loads (washer/dishwasher), and still optimize EV charging by price, since the grid is the only buffer available. Create each one via the UI (see the table above) or by YAML:
 
 ```yaml
 smart_energy_controller:
   scan_interval: 60
   rules:
-    - name: "Excedente solar sem bateria → aquecer termoacumulador ao máximo"
-      entity_id: sensor.excedente_solar_kw
+    - name: "Solar surplus, no battery → heat water tank to the max"
+      entity_id: sensor.solar_surplus_kw
       above: 1.5
       service: water_heater.set_temperature
       service_data:
-        entity_id: water_heater.termoacumulador
+        entity_id: water_heater.tank
         temperature: 65
-      explain: "Excedente solar acima de 1.5 kW e sem bateria para o guardar — aproveitar agora"
+      explain: "Solar surplus above 1.5 kW with no battery to store it — use it now"
 
-    - name: "Excedente solar alto → avisar para ligar máquina de lavar/loiça"
-      entity_id: sensor.excedente_solar_kw
+    - name: "High solar surplus → notify to run washer/dishwasher"
+      entity_id: sensor.solar_surplus_kw
       above: 2.5
-      service: notify.mobile_app_o_teu_telemovel
+      service: notify.mobile_app_your_phone
       service_data:
-        message: "Excedente solar alto agora — boa altura para ligar a máquina de lavar ou loiça."
-      explain: "Excedente solar acima de 2.5 kW"
+        message: "High solar surplus right now — good time to run the washer or dishwasher."
+      explain: "Solar surplus above 2.5 kW"
 
-    - name: "Preço baixo à noite → carregar o EV direto da rede"
-      entity_id: sensor.preco_eletricidade_atual
+    - name: "Low price at night → charge the EV straight from the grid"
+      entity_id: sensor.current_electricity_price
       below: 0.08
       service: switch.turn_on
       service_data:
-        entity_id: switch.wallbox_carregamento
-      explain: "Preço abaixo de 0.08 €/kWh — sem bateria a amortecer, aproveita-se o preço em vez do sol"
+        entity_id: switch.wallbox_charging
+      explain: "Price below €0.08/kWh — no battery to buffer, take the cheap grid price instead of the sun"
 ```
 
-## Serviços disponíveis
+## Available services
 
-- `smart_energy_controller.evaluate_now` — força uma avaliação imediata de todas as regras, sem esperar pelo próximo `scan_interval`.
+- `smart_energy_controller.evaluate_now` — forces an immediate evaluation of all rules, without waiting for the next `scan_interval`.
 
-## Como saber porque uma decisão foi tomada
+## How to know why a decision was made
 
-Cada vez que uma regra dispara, é emitido o evento `smart_energy_controller_decision` com `rule`, `service` e `reason`. Podes usá-lo num automation para notificar ("O Smart Energy Controller ligou o termoacumulador porque a bateria está a 84%") ou registar num `logbook`.
+Every time a rule fires, the `smart_energy_controller_decision` event is emitted with `rule`, `service`, and `reason`. Use it in an automation to notify ("Smart Energy Controller turned on the water heater because the battery is at 84%") or log it to the `logbook`.
 
-## Testes
+## Tests
 
-Requer Python 3.12+ (o `pytest-homeassistant-custom-component` acompanha a versão mínima do core, mais recente do que a do resto do projeto):
+Requires Python 3.12+ (`pytest-homeassistant-custom-component` tracks core HA's minimum Python version, newer than the rest of this project's):
 
 ```bash
 python3.12 -m venv .venv-ha && source .venv-ha/bin/activate
@@ -110,14 +110,14 @@ pip install -r ../../tests/requirements.txt
 python -m pytest ../../tests/ -q
 ```
 
-Os testes correm contra um Home Assistant core real (não simulado): criação da integração pela UI, adicionar/remover regras, importação de YAML legado, e o disparo efetivo do serviço na entidade alvo certa.
+Tests run against a real Home Assistant core (not mocked): setting up the integration via the UI, adding/removing rules, importing legacy YAML, and the service actually firing on the right target entity.
 
-## Roadmap desta integração
+## Roadmap for this integration
 
-- [x] Motor de regras determinísticas (limiares e estado).
-- [x] `config_flow` — configuração e gestão de regras pela interface, sem YAML.
-- [ ] Previsão solar (Forecast.Solar) e preços dinâmicos (OMIE) como condição — já existem no [Cloud Optimizer](../../cloud-service/README.md), falta ligar aqui.
-- [ ] Card Lovelace com explicação visual de cada decisão.
-- [ ] Publicação no HACS.
+- [x] Deterministic rules engine (thresholds and state).
+- [x] `config_flow` — set up and manage rules through the UI, no YAML.
+- [ ] Solar forecasts (Forecast.Solar) and dynamic prices (OMIE) as a condition — already exist in the [Cloud Optimizer](../../cloud-service/README.md), just need wiring in here.
+- [ ] Lovelace card with a visual explanation of each decision.
+- [ ] Publish to HACS.
 
-Ver mais no [README principal do projeto](../../README.md).
+See more in the [project's main README](../../README.md).

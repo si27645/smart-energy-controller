@@ -18,8 +18,8 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
-          # brands: pendente de submissão a home-assistant/brands (processo
-          # externo, com revisão manual) — ver checklist no README.
+          # brands: pending submission to home-assistant/brands (external
+          # process with manual review) — see checklist in the README.
           ignore: brands
 
   hassfest:

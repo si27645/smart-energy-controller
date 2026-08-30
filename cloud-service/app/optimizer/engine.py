@@ -53,7 +53,7 @@ def optimize(req: OptimizeRequest) -> OptimizeResponse:
             hour=h,
             battery_action_kw=round(decisions[h]["battery_action_kw"], 3),
             loads_on=decisions[h]["loads_on"],
-            reason="; ".join(decisions[h]["reasons"]) or "Sem ação — nada a otimizar nesta hora",
+            reason="; ".join(decisions[h]["reasons"]) or "No action — nothing to optimize this hour",
         )
         for h in range(HOURS_PER_DAY)
     ]
@@ -61,8 +61,8 @@ def optimize(req: OptimizeRequest) -> OptimizeResponse:
     notes = []
     if req.profile == "without_battery":
         notes.append(
-            "Sem bateria: o excedente que nenhuma carga flexível conseguiu absorver é considerado "
-            "perdido (injetado na rede a troco de quase nada)."
+            "No battery: any surplus no flexible load could absorb is considered lost "
+            "(exported to the grid for next to nothing)."
         )
 
     return OptimizeResponse(
@@ -104,20 +104,20 @@ def _schedule_flexible_loads(
         if len(chosen) < hours_needed:
             for h in chosen:
                 decisions[h]["reasons"].append(
-                    f"{load.name}: janela [{load.earliest_hour}h-{load.deadline_hour}h] "
-                    f"não chega para as {hours_needed}h necessárias"
+                    f"{load.name}: window [{load.earliest_hour}h-{load.deadline_hour}h] "
+                    f"is short of the {hours_needed}h needed"
                 )
 
         for h in chosen:
             decisions[h]["loads_on"].append(load.name)
             if remaining_surplus[h] >= load.power_kw:
                 remaining_surplus[h] -= load.power_kw
-                decisions[h]["reasons"].append(f"{load.name}: excedente solar cobre a carga (0 €)")
+                decisions[h]["reasons"].append(f"{load.name}: solar surplus covers the load (€0)")
             else:
                 grid_cost += load.power_kw * price[h]
                 grid_kwh += load.power_kw
                 decisions[h]["reasons"].append(
-                    f"{load.name}: sem excedente suficiente, preço da hora é {price[h]:.3f} €/kWh"
+                    f"{load.name}: not enough surplus, hourly price is €{price[h]:.3f}/kWh"
                 )
 
     return grid_cost, grid_kwh
@@ -148,7 +148,7 @@ def _schedule_battery(
         soc_kwh += charge
         remaining_surplus[h] -= charge
         decisions[h]["battery_action_kw"] += charge
-        decisions[h]["reasons"].append(f"Excedente solar de {charge:.1f} kW a carregar a bateria")
+        decisions[h]["reasons"].append(f"Solar surplus of {charge:.1f} kW charging the battery")
 
     # 2) Still below capacity? Top up from the grid in the cheapest hours left.
     charge_grid_cost = charge_grid_kwh = 0.0
@@ -164,7 +164,7 @@ def _schedule_battery(
         charge_grid_cost += charge * price[h]
         charge_grid_kwh += charge
         decisions[h]["battery_action_kw"] += charge
-        decisions[h]["reasons"].append(f"Preço baixo ({price[h]:.3f} €/kWh) — a carregar a bateria da rede")
+        decisions[h]["reasons"].append(f"Low price (€{price[h]:.3f}/kWh) — charging the battery from the grid")
 
     # 3) Discharge into the priciest hours that still have an unmet grid deficit.
     discharge_savings = discharge_kwh = 0.0
@@ -180,7 +180,7 @@ def _schedule_battery(
         discharge_kwh += discharge
         decisions[h]["battery_action_kw"] -= discharge
         decisions[h]["reasons"].append(
-            f"Preço alto ({price[h]:.3f} €/kWh) — a descarregar a bateria em vez de comprar à rede"
+            f"High price (€{price[h]:.3f}/kWh) — discharging the battery instead of buying from the grid"
         )
 
     return charge_grid_cost, charge_grid_kwh, discharge_savings, discharge_kwh

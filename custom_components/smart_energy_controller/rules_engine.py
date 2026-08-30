@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class Rule:
-    """A single "SE ... ENTÃO ..." rule."""
+    """A single "IF ... THEN ..." rule."""
 
     name: str
     entity_id: str

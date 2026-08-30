@@ -1,3 +1,3 @@
 evaluate_now:
-  name: Avaliar regras agora
-  description: Força uma avaliação imediata de todas as regras, sem esperar pelo próximo scan_interval.
+  name: Evaluate rules now
+  description: Forces an immediate evaluation of all rules, without waiting for the next scan_interval.

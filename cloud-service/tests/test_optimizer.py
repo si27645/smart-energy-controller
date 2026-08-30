@@ -26,10 +26,10 @@ def test_without_battery_prefers_free_solar_surplus_for_ev_charging():
     result = optimize(req)
 
     assert sorted(h.hour for h in result.schedule if "EV" in h.loads_on) == [11, 12]
-    assert "excedente solar" in result.schedule[11].reason.lower()
+    assert "solar surplus" in result.schedule[11].reason.lower()
     assert result.estimated_cost_eur == 0.0
     assert result.estimated_grid_import_kwh == 0.0
-    assert any("perdido" in note for note in result.notes)
+    assert any("lost" in note for note in result.notes)
 
 
 def test_without_battery_falls_back_to_cheapest_hour_when_no_surplus():
@@ -38,12 +38,12 @@ def test_without_battery_falls_back_to_cheapest_hour_when_no_surplus():
         solar_forecast_kw=[0.0] * 24,
         price_eur_per_kwh=_flat_price(),
         flexible_loads=[
-            FlexibleLoad(name="Termoacumulador", energy_kwh=2, power_kw=2, earliest_hour=0, deadline_hour=24)
+            FlexibleLoad(name="Water heater", energy_kwh=2, power_kw=2, earliest_hour=0, deadline_hour=24)
         ],
     )
 
     result = optimize(req)
-    on_hours = [h.hour for h in result.schedule if "Termoacumulador" in h.loads_on]
+    on_hours = [h.hour for h in result.schedule if "Water heater" in h.loads_on]
 
     assert on_hours == [3]  # the single cheapest hour in the window
     assert result.estimated_cost_eur == round(2 * 0.05, 4)
@@ -72,7 +72,7 @@ def test_with_battery_charges_cheap_and_discharges_pricey():
     assert by_hour[1] == 2.0
     # The priciest hour discharges instead of buying from the grid
     assert by_hour[19] == -2.0
-    assert "a descarregar a bateria" in result.schedule[19].reason
+    assert "discharging the battery" in result.schedule[19].reason
 
     assert result.estimated_cost_eur == 0.65
     assert result.estimated_grid_import_kwh == 8.0

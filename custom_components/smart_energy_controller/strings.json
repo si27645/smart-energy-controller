@@ -3,50 +3,50 @@
     "step": {
       "user": {
         "title": "Smart Energy Controller",
-        "description": "Cria a integração e depois adiciona regras em Definições → Dispositivos e Serviços → Smart Energy Controller → Configurar.",
+        "description": "Create the integration, then add rules under Settings → Devices & Services → Smart Energy Controller → Configure.",
         "data": {
-          "scan_interval": "Intervalo de avaliação (segundos)"
+          "scan_interval": "Evaluation interval (seconds)"
         }
       }
     },
     "abort": {
-      "single_instance_allowed": "Só pode existir uma instância do Smart Energy Controller."
+      "single_instance_allowed": "Only one instance of Smart Energy Controller is allowed."
     }
   },
   "options": {
     "step": {
       "init": {
         "menu_options": {
-          "add_rule": "Adicionar regra",
-          "remove_rule": "Remover regra"
+          "add_rule": "Add rule",
+          "remove_rule": "Remove rule"
         }
       },
       "add_rule": {
-        "title": "Nova regra",
-        "description": "SE a condição for verdadeira ENTÃO chama o serviço escolhido.",
+        "title": "New rule",
+        "description": "IF the condition is true THEN call the chosen service.",
         "data": {
-          "name": "Nome da regra",
-          "entity_id": "Entidade a observar",
-          "above": "Acima de (opcional)",
-          "below": "Abaixo de (opcional)",
-          "state": "Estado igual a (opcional)",
-          "service": "Serviço a chamar",
-          "explain": "Explicação (opcional)",
-          "target_entity_id": "Entidade alvo do serviço (opcional)"
+          "name": "Rule name",
+          "entity_id": "Entity to watch",
+          "above": "Above (optional)",
+          "below": "Below (optional)",
+          "state": "State equals (optional)",
+          "service": "Service to call",
+          "explain": "Explanation (optional)",
+          "target_entity_id": "Target entity for the service (optional)"
         }
       },
       "remove_rule": {
-        "title": "Remover regras",
+        "title": "Remove rules",
         "data": {
-          "rule": "Regras a remover"
+          "rule": "Rules to remove"
         }
       }
     },
     "abort": {
-      "no_rules": "Não há regras configuradas."
+      "no_rules": "There are no rules configured."
     },
     "error": {
-      "condition_required": "Define pelo menos uma condição (acima de, abaixo de, ou estado)."
+      "condition_required": "Set at least one condition (above, below, or state)."
     }
   }
 }

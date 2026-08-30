@@ -56,6 +56,6 @@ def test_raises_on_incomplete_file():
     try:
         parse_omie_marginalpdbc(truncated)
     except ValueError as exc:
-        assert "faltam" in str(exc)
+        assert "missing" in str(exc)
     else:
         raise AssertionError("expected ValueError for an incomplete file")

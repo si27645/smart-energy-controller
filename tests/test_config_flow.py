@@ -34,8 +34,8 @@ async def test_add_rule_via_options_flow_triggers_the_service(hass: HomeAssistan
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    hass.states.async_set("sensor.excedente_solar_kw", "5.0")
-    hass.states.async_set("switch.wallbox_carregamento", "off")
+    hass.states.async_set("sensor.solar_surplus_kw", "5.0")
+    hass.states.async_set("switch.wallbox_charging", "off")
 
     calls = []
     hass.services.async_register("switch", "turn_on", lambda call: calls.append(call))
@@ -50,18 +50,18 @@ async def test_add_rule_via_options_flow_triggers_the_service(hass: HomeAssistan
     result = await hass.config_entries.options.async_configure(
         form["flow_id"],
         {
-            "name": "Excedente solar → carregar EV",
-            "entity_id": "sensor.excedente_solar_kw",
+            "name": "Solar surplus → charge EV",
+            "entity_id": "sensor.solar_surplus_kw",
             "above": 3.2,
             "service": "switch.turn_on",
-            "target_entity_id": "switch.wallbox_carregamento",
+            "target_entity_id": "switch.wallbox_charging",
         },
     )
     assert result["type"] == "create_entry"
     await hass.async_block_till_done()
 
-    assert entry.options["rules"][0]["name"] == "Excedente solar → carregar EV"
-    assert entry.options["rules"][0]["service_data"] == {"entity_id": "switch.wallbox_carregamento"}
+    assert entry.options["rules"][0]["name"] == "Solar surplus → charge EV"
+    assert entry.options["rules"][0]["service_data"] == {"entity_id": "switch.wallbox_charging"}
 
     engine = hass.data[DOMAIN][entry.entry_id]
     await engine.async_evaluate_all()
@@ -69,7 +69,7 @@ async def test_add_rule_via_options_flow_triggers_the_service(hass: HomeAssistan
 
     # The service must fire on the chosen target, not blindly on every switch.
     assert len(calls) == 1
-    assert calls[0].data["entity_id"] == "switch.wallbox_carregamento"
+    assert calls[0].data["entity_id"] == "switch.wallbox_charging"
 
 
 async def test_add_rule_without_condition_shows_error(hass: HomeAssistant) -> None:
@@ -83,7 +83,7 @@ async def test_add_rule_without_condition_shows_error(hass: HomeAssistant) -> No
 
     result = await hass.config_entries.options.async_configure(
         form["flow_id"],
-        {"name": "Regra sem condição", "entity_id": "sensor.x", "service": "switch.turn_on"},
+        {"name": "Rule without a condition", "entity_id": "sensor.x", "service": "switch.turn_on"},
     )
 
     assert result["type"] == "form"
@@ -95,7 +95,7 @@ async def test_remove_rule_via_options_flow(hass: HomeAssistant) -> None:
         domain=DOMAIN,
         options={
             "scan_interval": 60,
-            "rules": [{"name": "Regra A", "entity_id": "sensor.x", "above": 1, "service": "switch.turn_on"}],
+            "rules": [{"name": "Rule A", "entity_id": "sensor.x", "above": 1, "service": "switch.turn_on"}],
         },
     )
     entry.add_to_hass(hass)
@@ -119,7 +119,7 @@ async def test_yaml_config_is_imported_into_a_config_entry(hass: HomeAssistant) 
     config = {
         DOMAIN: {
             "scan_interval": 45,
-            "rules": [{"name": "Regra YAML", "entity_id": "sensor.x", "above": 1, "service": "switch.turn_on"}],
+            "rules": [{"name": "YAML rule", "entity_id": "sensor.x", "above": 1, "service": "switch.turn_on"}],
         }
     }
     assert await async_setup(hass, config)
@@ -128,4 +128,4 @@ async def test_yaml_config_is_imported_into_a_config_entry(hass: HomeAssistant) 
     entries = hass.config_entries.async_entries(DOMAIN)
     assert len(entries) == 1
     assert entries[0].options["scan_interval"] == 45
-    assert entries[0].options["rules"][0]["name"] == "Regra YAML"
+    assert entries[0].options["rules"][0]["name"] == "YAML rule"

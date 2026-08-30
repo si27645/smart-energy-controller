@@ -270,11 +270,11 @@
       Smart Energy<span class="mono" style="color:var(--copper)">.</span>Controller
     </div>
     <ul class="nav-links">
-      <li><a href="#como-funciona">Como funciona</a></li>
-      <li><a href="#integracoes">Integrações</a></li>
-      <li><a href="#precos">Preços</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#integrations">Integrations</a></li>
+      <li><a href="#pricing">Pricing</a></li>
     </ul>
-    <a class="nav-cta" href="#waitlist">Lista de espera</a>
+    <a class="nav-cta" href="#waitlist">Waitlist</a>
   </div>
 </header>
 
@@ -283,18 +283,18 @@
     <div class="wrap">
       <div class="hero-grid">
         <div>
-          <p class="eyebrow">Motor de decisão energética · para casas com solar</p>
-          <h1>A tua casa já tem<br>os dados. Falta-lhe<br><em>o cérebro.</em></h1>
-          <p class="lead">Liga-se ao inversor, à wallbox e à bomba de calor que já tens — e decide sozinho a cada minuto o que fazer com cada kWh, em vez de o veres escoar para a rede a troco de nada.</p>
+          <p class="eyebrow">Energy decision engine · for solar homes</p>
+          <h1>Your home already<br>has the data. It's<br>missing <em>the brain.</em></h1>
+          <p class="lead">Connects to the inverter, wallbox, and heat pump you already have — and decides on its own, every minute, what to do with each kWh, instead of you watching it drain into the grid for nothing.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#waitlist">Entrar na lista de espera</a>
-            <a class="btn btn-ghost" href="#como-funciona">Ver como decide →</a>
+            <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+            <a class="btn btn-ghost" href="#how-it-works">See how it decides →</a>
           </div>
-          <p class="hero-note">Corre dentro do teu Home Assistant. Local-first — os teus dados de consumo não saem de casa. <strong style="color:var(--ink)">Com bateria ou sem bateria</strong> — sem bateria, usamos o termoacumulador e a bomba de calor como reserva térmica.</p>
+          <p class="hero-note">Runs inside your Home Assistant. Local-first — your consumption data never leaves home. <strong style="color:var(--ink)">With a battery or without one</strong> — without one, we use the water heater and heat pump as thermal storage.</p>
         </div>
         <div class="arc-card">
-          <div class="cap"><span>Ciclo de 24h — hoje</span><span>03:00 → 21:00</span></div>
-          <svg viewBox="0 0 480 260" width="100%" role="img" aria-label="Gráfico de produção solar e preço da eletricidade ao longo do dia, com três decisões automáticas assinaladas">
+          <div class="cap"><span>24h cycle — today</span><span>03:00 → 21:00</span></div>
+          <svg viewBox="0 0 480 260" width="100%" role="img" aria-label="Chart of solar production and electricity price throughout the day, with three automatic decisions marked">
             <defs>
               <linearGradient id="solarFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="var(--copper)" stop-opacity="0.35"/>
@@ -321,9 +321,9 @@
             <circle cx="335" cy="122" r="5" fill="var(--sage)" stroke="var(--paper)" stroke-width="2"/>
           </svg>
           <div class="arc-legend">
-            <span><i class="swatch" style="background:var(--copper)"></i>Produção solar</span>
-            <span><i class="swatch" style="background:var(--teal-soft)"></i>Preço da eletricidade</span>
-            <span><i class="swatch" style="background:var(--sage)"></i>Decisão automática</span>
+            <span><i class="swatch" style="background:var(--copper)"></i>Solar production</span>
+            <span><i class="swatch" style="background:var(--teal-soft)"></i>Electricity price</span>
+            <span><i class="swatch" style="background:var(--sage)"></i>Automatic decision</span>
           </div>
         </div>
       </div>
@@ -333,125 +333,125 @@
   <section class="tight">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">O problema</p>
-        <h2>Cada dispositivo é inteligente. A casa não é.</h2>
+        <p class="eyebrow">The problem</p>
+        <h2>Every device is smart. The house isn't.</h2>
       </div>
       <div class="problem-list">
         <div class="problem-item">
-          <p class="tag">// excedente perdido</p>
-          <p>O sol dá 3 kW a mais ao meio-dia e ninguém está em casa para ligar o carro — vai tudo para a rede a troco de cêntimos.</p>
+          <p class="tag">// wasted surplus</p>
+          <p>The sun gives you 3 kW extra at noon and nobody's home to plug in the car — it all goes to the grid for a few cents.</p>
         </div>
         <div class="problem-item">
-          <p class="tag">// bateria mal gerida</p>
-          <p>O termoacumulador liga a meio da tarde com a bateria a 40%, gastando o que devia sobrar para a noite.</p>
+          <p class="tag">// mismanaged battery</p>
+          <p>The water heater kicks in mid-afternoon with the battery at 40%, spending what should have been saved for the night.</p>
         </div>
         <div class="problem-item">
-          <p class="tag">// automações frágeis</p>
-          <p>Home Assistant tem os dados todos, mas manter as automações certas exige YAML, tempo e tentativa-erro constante.</p>
+          <p class="tag">// fragile automations</p>
+          <p>Home Assistant has all the data, but keeping the right automations running takes YAML, time, and constant trial and error.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="como-funciona">
+  <section id="how-it-works">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Como funciona</p>
-        <h2>Regras que se explicam sozinhas</h2>
-        <p>O motor recalcula a cada poucos minutos, cruzando produção solar prevista, preço dinâmico da eletricidade e o estado real de cada dispositivo. Tens bateria? Otimiza a carga e descarga. Não tens? Usa o termoacumulador e a bomba de calor como reserva térmica — o motor adapta-se ao que existe em tua casa.</p>
+        <p class="eyebrow">How it works</p>
+        <h2>Rules that explain themselves</h2>
+        <p>The engine recalculates every few minutes, crossing forecast solar production, the dynamic electricity price, and the real state of each device. Have a battery? It optimizes charge and discharge. Don't? It uses the water heater and heat pump as thermal storage — the engine adapts to whatever exists in your home.</p>
       </div>
       <div class="rules-grid">
         <div class="rule-card">
-          <p class="cond">SE <span class="k">excedente_solar</span> &gt; <span class="v">3.2 kW</span></p>
-          <p class="out"><span class="arrow">→</span>carregar o carro elétrico</p>
+          <p class="cond">IF <span class="k">solar_surplus</span> &gt; <span class="v">3.2 kW</span></p>
+          <p class="out"><span class="arrow">→</span>charge the electric car</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">bateria.soc</span> &gt; <span class="v">80%</span></p>
-          <p class="out"><span class="arrow">→</span>ligar o termoacumulador</p>
+          <p class="cond">IF <span class="k">battery.soc</span> &gt; <span class="v">80%</span></p>
+          <p class="out"><span class="arrow">→</span>turn on the water heater</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">previsão_amanhã</span> = <span class="v">baixa</span></p>
-          <p class="out"><span class="arrow">→</span>não gastar a bateria hoje</p>
+          <p class="cond">IF <span class="k">tomorrow_forecast</span> = <span class="v">low</span></p>
+          <p class="out"><span class="arrow">→</span>don't drain the battery today</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">preço@03:00</span> = <span class="v">baixo</span></p>
-          <p class="out"><span class="arrow">→</span>carregar a bateria da rede</p>
+          <p class="cond">IF <span class="k">price@03:00</span> = <span class="v">low</span></p>
+          <p class="out"><span class="arrow">→</span>charge the battery from the grid</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">ev.precisa</span> = <span class="v">20 kWh antes 08:00</span></p>
-          <p class="out"><span class="arrow">→</span>otimizar a janela de carregamento</p>
+          <p class="cond">IF <span class="k">ev.needs</span> = <span class="v">20 kWh before 08:00</span></p>
+          <p class="out"><span class="arrow">→</span>optimize the charging window</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">decisão</span> = <span class="v">qualquer</span></p>
-          <p class="out"><span class="arrow">→</span>mostrar sempre o porquê</p>
+          <p class="cond">IF <span class="k">decision</span> = <span class="v">any</span></p>
+          <p class="out"><span class="arrow">→</span>always show why</p>
         </div>
         <div class="rule-card">
-          <p class="cond">SE <span class="k">excedente_solar</span> &gt; <span class="v">1.5 kW</span> <span style="color:var(--ink-soft); font-size:0.75rem;">(sem bateria)</span></p>
-          <p class="out"><span class="arrow">→</span>aquecer o termoacumulador ao máximo — bateria térmica</p>
+          <p class="cond">IF <span class="k">solar_surplus</span> &gt; <span class="v">1.5 kW</span> <span style="color:var(--ink-soft); font-size:0.75rem;">(no battery)</span></p>
+          <p class="out"><span class="arrow">→</span>heat the water tank to the max — thermal battery</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="integracoes" class="tight">
+  <section id="integrations" class="tight">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Integrações</p>
-        <h2>Fala com o que já tens em casa</h2>
-        <p>Nenhuma integração é obrigatória — o motor usa o que existir. Bateria é opcional.</p>
+        <p class="eyebrow">Integrations</p>
+        <h2>Talks to what you already have at home</h2>
+        <p>No integration is required — the engine uses whatever exists. A battery is optional.</p>
       </div>
       <div class="chips">
-        <span class="chip"><b>FoxESS</b> · inversor</span>
-        <span class="chip"><b>Victron</b> · inversor/bateria</span>
-        <span class="chip"><b>Shelly</b> · relés e medição</span>
-        <span class="chip"><b>Wallbox</b> · carregamento EV</span>
-        <span class="chip"><b>Bomba de calor</b> · via Home Assistant</span>
-        <span class="chip"><b>Home Assistant</b> · hub central</span>
-        <span class="chip"><b>OMIE / Indexa</b> · tarifário dinâmico</span>
+        <span class="chip"><b>FoxESS</b> · inverter</span>
+        <span class="chip"><b>Victron</b> · inverter/battery</span>
+        <span class="chip"><b>Shelly</b> · relays & metering</span>
+        <span class="chip"><b>Wallbox</b> · EV charging</span>
+        <span class="chip"><b>Heat pump</b> · via Home Assistant</span>
+        <span class="chip"><b>Home Assistant</b> · central hub</span>
+        <span class="chip"><b>OMIE / Indexa</b> · dynamic tariff</span>
       </div>
     </div>
   </section>
 
-  <section id="precos">
+  <section id="pricing">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Preços</p>
-        <h2>Simples, sem letras pequenas</h2>
-        <p>O motor de regras é gratuito para sempre — corre em tua casa, é teu. Só cobramos pelo que exige um servidor a correr do nosso lado.</p>
+        <p class="eyebrow">Pricing</p>
+        <h2>Simple, no fine print</h2>
+        <p>The rules engine is free forever — it runs in your home, it's yours. We only charge for what requires a server running on our side.</p>
       </div>
       <div class="pricing-grid">
         <div class="price-card">
           <p class="plan">Community</p>
-          <p class="amount">€0<small>/sempre</small></p>
+          <p class="amount">€0<small>/forever</small></p>
           <ul>
-            <li>Motor de regras completo, sem limite de regras</li>
-            <li>FoxESS, Victron, Shelly, Wallbox, bomba de calor</li>
-            <li>Open-source, instalação via HACS</li>
-            <li>Explicação de cada decisão</li>
+            <li>Full rules engine, no limit on rules</li>
+            <li>FoxESS, Victron, Shelly, Wallbox, heat pump</li>
+            <li>Open-source, installed via HACS</li>
+            <li>Explanation for every decision</li>
           </ul>
-          <a class="btn btn-ghost" href="#waitlist">Começar grátis</a>
+          <a class="btn btn-ghost" href="#waitlist">Start for free</a>
         </div>
         <div class="price-card featured">
           <p class="plan">Cloud Copilot</p>
-          <p class="amount">€5<small>/mês</small></p>
+          <p class="amount">€5<small>/month</small></p>
           <ul>
-            <li>Tudo do Community, mais:</li>
-            <li>Previsão solar + preço dinâmico agregada</li>
-            <li>Otimizador do dia seguinte (não só limiares)</li>
-            <li>Comparação com casas parecidas</li>
+            <li>Everything in Community, plus:</li>
+            <li>Aggregated solar forecast + dynamic price</li>
+            <li>Day-ahead optimizer (not just thresholds)</li>
+            <li>Comparison with similar homes</li>
           </ul>
-          <a class="btn btn-primary" href="#waitlist">Reservar acesso antecipado</a>
+          <a class="btn btn-primary" href="#waitlist">Reserve early access</a>
         </div>
         <div class="price-card">
-          <p class="plan">Instaladores</p>
-          <p class="amount">Sob consulta</p>
+          <p class="plan">Installers</p>
+          <p class="amount">Custom pricing</p>
           <ul>
-            <li>Painel hospedado multi-casa</li>
-            <li>O cliente final não mexe em YAML</li>
-            <li>Faturado por casa, com margem para ti</li>
-            <li>Ideal para diferenciar a tua instalação</li>
+            <li>Hosted multi-home dashboard</li>
+            <li>Your customer never touches YAML</li>
+            <li>Billed per home, with margin for you</li>
+            <li>Great way to differentiate your install</li>
           </ul>
-          <a class="btn btn-ghost" href="#waitlist">Falar sobre parceria</a>
+          <a class="btn btn-ghost" href="#waitlist">Talk about a partnership</a>
         </div>
       </div>
     </div>
@@ -461,14 +461,14 @@
     <div class="wrap">
       <div class="waitlist">
         <div>
-          <p class="eyebrow" style="color:var(--copper-soft)">Lançamento em preparação</p>
-          <h2>Sê dos primeiros a testar</h2>
-          <p>Sem spam. Um email quando a versão Community sair no HACS, com desconto de lançamento para os planos pagos.</p>
+          <p class="eyebrow" style="color:var(--copper-soft)">Launch in progress</p>
+          <h2>Be among the first to try it</h2>
+          <p>No spam. One email when the Community version ships on HACS, with a launch discount for the paid plans.</p>
         </div>
         <div>
           <form id="waitlistForm">
-            <input type="email" id="waitlistEmail" placeholder="o-teu-email@exemplo.pt" required aria-label="O teu email">
-            <button type="submit">Entrar</button>
+            <input type="email" id="waitlistEmail" placeholder="you@example.com" required aria-label="Your email">
+            <button type="submit">Join</button>
           </form>
           <p class="status" id="waitlistStatus" role="status"></p>
         </div>
@@ -479,8 +479,8 @@
 
 <footer>
   <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; width:100%;">
-    <span>Smart Energy Controller — projeto em fase de validação</span>
-    <span>Construído sobre Home Assistant · local-first por design</span>
+    <span>Smart Energy Controller — project in validation phase</span>
+    <span>Built on Home Assistant · local-first by design</span>
   </div>
 </footer>
 
@@ -497,7 +497,7 @@
         list.push({email: email, at: Date.now()});
         localStorage.setItem('sec_waitlist', JSON.stringify(list));
       }catch(err){ /* storage unavailable — still confirm visually */ }
-      status.textContent = 'Registado — falamos em breve.';
+      status.textContent = "You're on the list — talk soon.";
       form.reset();
     });
   })();

@@ -99,7 +99,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_EVALUATE_NOW, _async_handle_evaluate_now)
 
     _LOGGER.info(
-        "Smart Energy Controller a correr com %d regra(s), a cada %ds",
+        "Smart Energy Controller running with %d rule(s), every %ds",
         len(engine.rules),
         scan_interval.total_seconds(),
     )

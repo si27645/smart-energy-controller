@@ -1,8 +1,8 @@
 # ☁️ Cloud Optimizer
 
-O único serviço do produto que corre fora de casa do utilizador: agrega previsão solar + preço dinâmico e calcula um plano do dia seguinte, para os dois perfis (com e sem bateria). O motor local (`custom_components/`) continua gratuito e funcional sem isto — este serviço é o que sustenta o plano opcional **Cloud Copilot**, que existe porque agregar e otimizar estes dados exige infraestrutura contínua, ao contrário da lógica que corre em casa do utilizador.
+The only part of the product that runs outside the user's home: aggregates solar forecasts + dynamic prices and computes a next-day plan, for both profiles (with and without a battery). The local engine (`custom_components/`) stays free and functional without this — this service is what backs the optional **Cloud Copilot** plan, which exists because aggregating and optimizing this data requires ongoing infrastructure, unlike logic that runs in the user's own home.
 
-## Correr localmente
+## Running locally
 
 ```bash
 cd cloud-service
@@ -11,7 +11,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Testes (sem rede, dados sintéticos + um ficheiro OMIE real capturado como fixture):
+Tests (no network, synthetic data + a real OMIE file captured as a fixture):
 
 ```bash
 python -m pytest -q
@@ -19,16 +19,16 @@ python -m pytest -q
 
 ## Endpoints
 
-| Endpoint | O que faz |
+| Endpoint | What it does |
 |---|---|
-| `GET /health` | Verificação simples. |
-| `GET /forecast/solar?lat=&lon=&declination=&azimuth=&kwp=` | Previsão solar horária (kW), via [Forecast.Solar](https://doc.forecast.solar/) (API pública, sem chave, limitada a ~12 pedidos/hora por IP). |
-| `GET /prices/omie?market=pt` | Preços horários do mercado ibérico (€/kWh), via ficheiro público diário da OMIE. |
-| `POST /optimize` | Recebe previsão solar + preços + consumo + cargas flexíveis (+ bateria, opcional) e devolve o plano das 24h, com uma razão por decisão. |
+| `GET /health` | Simple health check. |
+| `GET /forecast/solar?lat=&lon=&declination=&azimuth=&kwp=` | Hourly solar forecast (kW), via [Forecast.Solar](https://doc.forecast.solar/) (public API, no key, limited to ~12 requests/hour per IP). |
+| `GET /prices/omie?market=pt` | Hourly Iberian market prices (€/kWh), via OMIE's daily public file. |
+| `POST /optimize` | Takes solar forecast + prices + consumption + flexible loads (+ battery, optional) and returns the 24h plan, with one reason per decision. |
 
-Testado com dados reais ao vivo em 2026-08-30 — os três endpoints e o `/optimize` de ponta a ponta (previsão solar real → preços OMIE reais → plano otimizado) funcionaram tal como documentado abaixo.
+Tested against real, live data on 2026-08-30 — all three endpoints and `/optimize` end-to-end (real solar forecast → real OMIE prices → optimized plan) worked as documented below.
 
-### Exemplo de pedido a `/optimize`
+### Example `/optimize` request
 
 ```json
 {
@@ -41,21 +41,21 @@ Testado com dados reais ao vivo em 2026-08-30 — os três endpoints e o `/optim
 }
 ```
 
-Para o perfil sem bateria, basta omitir `battery` e pôr `"profile": "without_battery"` — as cargas flexíveis (termoacumulador, EV, etc.) continuam a ser otimizadas por excedente solar primeiro, preço mais barato depois.
+For the no-battery profile, just omit `battery` and set `"profile": "without_battery"` — flexible loads (water heater, EV, etc.) are still optimized by solar surplus first, cheapest price second.
 
-## Como funciona o otimizador
+## How the optimizer works
 
-Heurística gulosa e explicável (não um modelo opaco), em [`app/optimizer/engine.py`](app/optimizer/engine.py):
+A greedy, explainable heuristic (not an opaque model), in [`app/optimizer/engine.py`](app/optimizer/engine.py):
 
-1. **Cargas flexíveis primeiro**, mais urgentes (deadline mais cedo) primeiro: cada uma tenta encaixar nas horas com excedente solar sobrante; o que faltar vai para as horas mais baratas da janela.
-2. **Bateria** (só no perfil `with_battery`): carrega do excedente solar que sobrou, depois completa da rede nas horas mais baratas do dia, e descarrega nas horas mais caras que ainda têm défice por cobrir — nunca abaixo da reserva mínima configurada.
+1. **Flexible loads first**, most urgent (earliest deadline) first: each one tries to fit into hours with leftover solar surplus; whatever's left goes to the cheapest hours in its window.
+2. **Battery** (`with_battery` profile only): charges from leftover solar surplus, then tops up from the grid in the cheapest hours of the day, and discharges into the priciest hours that still have an unmet deficit — never below the configured reserve.
 
-Cada hora do plano vem com uma frase em português a explicar a decisão — o mesmo princípio de explicabilidade do motor local.
+Every hour of the plan comes with a sentence explaining the decision — the same explainability principle as the local engine.
 
-## Limitações conhecidas (MVP)
+## Known limitations (MVP)
 
-- **Sem mistura parcial dentro da hora**: se a carga (ex.: EV a 3.6 kW) excede o excedente solar instantâneo (ex.: 2 kW), a hora inteira cai para a lógica de preço em vez de aproveitar os 2 kW grátis e comprar só a diferença. Visto isto em teste real — o EV do exemplo acima nunca usou solar porque a produção de pico (~2.5 kW) nunca chegou aos 3.6 kW da wallbox.
-- **Heurística gulosa, não um solver ótimo global**: pode encher a bateria mais do que o necessário se não houver um défice caro mais tarde no dia para justificar. Prioriza-se a explicabilidade sobre a otimalidade absoluta — decisão consciente, não um bug.
-- **Ordem das colunas do ficheiro OMIE (Espanha/Portugal) não está documentada pela própria OMIE** — o parser assume uma ordem por omissão; confirmar antes de usar em produção (ver comentário em [`app/providers/price_feed.py`](app/providers/price_feed.py)).
-- **Forecast.Solar gratuito**: só cobre hoje/amanhã e tem limite de pedidos — adequado para um plano diário, não para histórico.
-- Só planeia **um dia** de cada vez — não olha para o dia seguinte ao decidir "poupar a bateria para amanhã" (isso ainda vive como regra separada no motor local).
+- **No partial blending within the hour**: if a load (e.g. an EV at 3.6 kW) exceeds the instantaneous solar surplus (e.g. 2 kW), the whole hour falls back to price logic instead of taking the free 2 kW and buying only the difference. Seen in a real test — the EV in the example above never used solar because peak production (~2.5 kW) never reached the wallbox's 3.6 kW.
+- **Greedy heuristic, not a globally optimal solver**: it can fill the battery more than necessary if there's no pricey deficit later in the day to justify it. Explainability is prioritized over absolute optimality — a deliberate choice, not a bug.
+- **The OMIE file's column order (Spain/Portugal) isn't documented by OMIE itself** — the parser assumes a default order; confirm before relying on it in production (see the comment in [`app/providers/price_feed.py`](app/providers/price_feed.py)).
+- **Free Forecast.Solar**: only covers today/tomorrow and has a request limit — fine for a daily plan, not for historical data.
+- Only plans **one day** at a time — it doesn't look ahead when deciding to "save the battery for tomorrow" (that still lives as a separate rule in the local engine).
