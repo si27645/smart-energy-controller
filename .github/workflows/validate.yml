@@ -18,6 +18,9 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
+          # brands: pendente de submissão a home-assistant/brands (processo
+          # externo, com revisão manual) — ver checklist no README.
+          ignore: brands
 
   hassfest:
     name: Hassfest
@@ -36,4 +39,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r tests/requirements.txt
-      - run: pytest tests/ -q
+      # `pytest` as a bare console script does not add the repo root to
+      # sys.path, so `import custom_components...` fails in CI even though
+      # `python -m pytest` (which does add it) works fine locally.
+      - run: python -m pytest tests/ -q

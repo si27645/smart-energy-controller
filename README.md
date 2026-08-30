@@ -62,8 +62,17 @@ pip install -r requirements.txt && pytest -q
 
 # Integração Home Assistant — requer Python 3.12+ (pytest-homeassistant-custom-component)
 python3.12 -m venv .venv-ha && source .venv-ha/bin/activate
-pip install -r tests/requirements.txt && pytest tests/ -q
+pip install -r tests/requirements.txt && python -m pytest tests/ -q
 ```
+
+## Estado da publicação no HACS
+
+- [x] Estrutura, `manifest.json`, `hacs.json`, `LICENSE` e CI de validação (`hacs/action` + `hassfest`).
+- [x] `config_flow` — sem YAML obrigatório.
+- [ ] **Ícone/logo em [home-assistant/brands](https://github.com/home-assistant/brands)** — processo externo com revisão manual da equipa do Home Assistant; até lá, o `hacs/action` ignora deliberadamente esta verificação (`ignore: brands` no workflow).
+- [ ] Submissão a [hacs/default](https://github.com/hacs/default) para aparecer na pesquisa do HACS sem o utilizador colar o URL do repositório.
+
+Até estes dois últimos ficarem tratados, instala-se como [repositório personalizado](https://hacs.xyz/docs/faq/custom_repositories/) no HACS.
 
 ## Contribuir
 

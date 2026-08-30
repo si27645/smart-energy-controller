@@ -1,6 +1,5 @@
 {
   "name": "Smart Energy Controller",
   "render_readme": true,
-  "domains": ["smart_energy_controller"],
   "homeassistant": "2024.1.0"
 }

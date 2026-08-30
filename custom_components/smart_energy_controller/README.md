@@ -107,7 +107,7 @@ Requer Python 3.12+ (o `pytest-homeassistant-custom-component` acompanha a vers�
 ```bash
 python3.12 -m venv .venv-ha && source .venv-ha/bin/activate
 pip install -r ../../tests/requirements.txt
-pytest ../../tests/ -q
+python -m pytest ../../tests/ -q
 ```
 
 Os testes correm contra um Home Assistant core real (não simulado): criação da integração pela UI, adicionar/remover regras, importação de YAML legado, e o disparo efetivo do serviço na entidade alvo certa.
